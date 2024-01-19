@@ -1,3 +1,4 @@
+import 'package:chat_app/Screens/SplashScreen.dart';
 import 'package:chat_app/Screens/auth/LoginScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
          ),
        ),
 
-      home: LoginScreen(),
+      home:SplashScreen()
+      // LoginScreen(),
     );
   }
 }

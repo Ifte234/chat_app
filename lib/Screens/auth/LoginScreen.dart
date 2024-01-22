@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../apis/APIs.dart';
 import '../../main.dart';
 import '../HomePage.dart';
 
@@ -32,11 +33,20 @@ class _LoginScreenState extends State<LoginScreen> {
   _handleGoogleBtnClk(){
     // For showing ProgressBar
     DialogUtils.showProgressBar(context);
-_signInWithGoogle().then((user) {
+_signInWithGoogle().then((user) async {
   Navigator.pop(context);
-  log('\n User: ${user?.user}');
-  log('\n UserAdditionalInfo: ${user?.additionalUserInfo}');
+  if(user!= null){
+
+    log('\n User: ${user?.user}');
+    log('\n UserAdditionalInfo: ${user?.additionalUserInfo}');
+
+    if((await Api.userExists())){
+
   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>HomePage()));
+  }else{
+      await Api.createUser().then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>HomePage())));
+    }
+  }
 });
   }
 

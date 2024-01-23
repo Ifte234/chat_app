@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:chat_app/Screens/ProfilePage.dart';
 import 'package:chat_app/apis/APIs.dart';
 import 'package:chat_app/apis/ChatUser.dart';
 import 'package:chat_app/widgets/chat_user_card.dart';
@@ -19,33 +20,36 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<ChatUser> list = [];
-    return Scaffold(
+    @override
+    void initState() {
+      // TODO: implement initState
+      super.initState();
+      Api.selfInfo();
+    }
+
+      return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.home),
         title: Text("Chatify"),
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.search)),
           IconButton(onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            await GoogleSignIn().signOut();
-            // Show a SnackBar with the "Logged Out!" message
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Logged Out!'),
-              ),
-            );
+
+            Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage(user: Api.me,)));
           }, icon: Icon(Icons.more_vert))
 
         ],
       ),
       
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+
+        },
         child: Icon(Icons.add_comment_rounded),
       ),
       
       body: StreamBuilder(
-        stream: Api.firestore.collection('users').snapshots(),
+        stream: Api.getAllUsers(),
         builder: (context, snapshot) {
           switch(snapshot.connectionState){
           //   if data is loading

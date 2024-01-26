@@ -3,6 +3,7 @@
 import 'package:chat_app/apis/ChatUser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 
 class Api {
 //   for authentication
@@ -10,7 +11,7 @@ class Api {
 //   For Accessing Cloud Firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   // For getting Self info
-  static late ChatUser me;
+  static late ChatUser me = ChatUser(lastSeen: Api.me.lastSeen, name: Api.me.name, about: Api.me.about, email: Api.me.email, id: Api.me.id, image: Api.me.image, createdAt: Api.me.createdAt, pushToken: Api.me.pushToken);
   // getter for getting current user
   static User get user =>auth.currentUser!;
 
@@ -22,11 +23,26 @@ class Api {
             .get())
         .exists;
   }
-//   For getting Sef info
+  // for getting current user info
+  static Future<void> getSelfInfo() async {
+    await firestore.collection('users').doc(user.uid).get().then((user) async {
+      if (user.exists) {
+        me = ChatUser.fromJson(user.data()!);
+        // await getFirebaseMessagingToken();
+
+        //for setting user status to active
+        // Api.updateActiveStatus(true);
+        debugPrint('My Data: ${user.data()}');
+      } else {
+        await createUser().then((value) => getSelfInfo());
+      }
+    });
+  }
+//   For getting Self info
   static Future<void> selfInfo() async {
     await firestore
-        .collection('users')
-        .doc(auth.currentUser?.uid)
+        .collection('user')
+        .doc(user.uid)
         .get().then((user) async {
           if(user.exists){
             me = ChatUser.fromJson(user.data()!);
@@ -43,9 +59,15 @@ static Future<void> createUser()async{
 return await firestore.collection('users').doc(user.uid).set(chatuser.toJson());
 
   }
-
+  // *******Updating UserProfile data **************
+  static Future<void> UpdateUserInfo() async {
+    await firestore
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .update({'name':me.name,'about':me.about});
+  }
   // *******  For getting All Users from firestore database  *******************************
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(){
-    return Api.firestore.collection('users').where('id', isNotEqualTo: user.uid).snapshots();
+    return firestore.collection('users').where('id', isNotEqualTo: user.uid).snapshots();
   }
 }

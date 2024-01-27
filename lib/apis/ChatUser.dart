@@ -10,15 +10,15 @@ class ChatUser {
     required this.createdAt,
     required this.pushToken,
   });
-  late final String lastSeen;
-  late final String name;
-  // late final bool isOnline;
-  late final String about;
-  late final String email;
-  late final String id;
-  late final String image;
-  late final String createdAt;
-  late final String pushToken;
+  late String lastSeen;
+  late String name;
+  // late bool isOnline;
+  late String about;
+  late String email;
+  late String id;
+  late String image;
+  late String createdAt;
+  late String pushToken;
 
   ChatUser.fromJson(Map<String, dynamic> json){
     lastSeen = json['last_seen'] ?? '';

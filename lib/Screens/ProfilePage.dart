@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: Text("Profile}"),
       ),
       body: Form(
         key: _formkey,
@@ -134,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
              Api.UpdateUserInfo().then((value){
                ScaffoldMessenger.of(context).showSnackBar(
                  SnackBar(
-                   content: Text('Profile has been Updated Successfully'),
+                   content: Text('Profile has been Updated Successfully!'),
                    duration: Duration(seconds: 2),
                    // action: SnackBarAction(
                    //   label: 'Undo',

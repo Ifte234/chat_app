@@ -11,8 +11,17 @@ class Api {
 //   For Accessing Cloud Firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   // For getting Self info
-  static late ChatUser me = ChatUser(lastSeen: Api.me.lastSeen, name: Api.me.name, about: Api.me.about, email: Api.me.email, id: Api.me.id, image: Api.me.image, createdAt: Api.me.createdAt, pushToken: Api.me.pushToken);
-  // getter for getting current user
+  // for storing self information
+  static ChatUser me = ChatUser(
+      id: user.uid,
+      name: user.displayName.toString(),
+      email: user.email.toString(),
+      about: "Hey, I'm using We Chat!",
+      image: user.photoURL.toString(),
+      createdAt: '',
+      // isOnline: false,
+      // lastActive: '',
+      pushToken: '', lastSeen: ''); // getter for getting current user
   static User get user =>auth.currentUser!;
 
 // for checking if user exists or not

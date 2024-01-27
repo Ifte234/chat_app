@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../Screens/ChatScreen.dart';
 import '../apis/ChatUser.dart';
 import '../main.dart';
 
@@ -23,7 +24,10 @@ class _ChatUserCardState extends State<ChatUserCard> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3.0),
       child: Card(child: InkWell(
-        onTap: (){},
+        onTap: (){
+          // For Navigating to chat screen
+          Navigator.push(context, MaterialPageRoute(builder: (_)=>ChatScreen(user: widget.user,)));
+        },
         child: ListTile(
           // Profile Pic
           // leading: CircleAvatar(child:

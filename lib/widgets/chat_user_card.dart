@@ -27,6 +27,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
         onTap: (){
           // For Navigating to chat screen
           Navigator.push(context, MaterialPageRoute(builder: (_)=>ChatScreen(user: widget.user,)));
+          // Navigator.pop(context);
         },
         child: ListTile(
           // Profile Pic

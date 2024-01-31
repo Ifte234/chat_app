@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // Api.selfInfo();
+
     Api.getSelfInfo();
 
 
@@ -46,7 +46,29 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.home),
-        title: Text("Chatify h;"),
+        title: _isSearching? TextFormField(
+autofocus: true,
+          // When search list changes update the search list
+          onChanged: (val){
+  _searchuser.clear();
+          // Search Logic
+            for(var i in list){
+              if(i.name.toLowerCase().contains(val.toLowerCase()) || i.email.toLowerCase().contains(val.toLowerCase())){
+                _searchuser.add(i);
+                setState(() {
+                  _searchuser;
+                });
+              }
+
+            }
+
+          },
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: "Name,Email...",
+
+          ),
+        ) : Text("Chatify App"),
         actions: [
           // Search Button / Icon
           InkWell(
@@ -62,17 +84,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // IconButton(
-          //   onPressed: () {
-          //     setState(() {
-          //       _isSearching = !_isSearching;
-          //     });
-          //   },
-          //   icon: Icon(
-          //     getSearchIcon(),
-          //   ),
-          // ),
-          IconButton(
+           IconButton(
               onPressed: () async {
                 // debugPrint('${Api.me}');
 
@@ -120,13 +132,13 @@ class _HomePageState extends State<HomePage> {
             // }
             if (list.isNotEmpty) {
               return ListView.builder(
-                itemCount: list.length,
+                itemCount: _isSearching? _searchuser.length:list.length,
                 physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   // return
                   // Text('Name: ${list[index]}');
                   return ChatUserCard(
-                    user: list[index],
+                    user: _isSearching? _searchuser[index] : list[index],
                   );
                 },
               );

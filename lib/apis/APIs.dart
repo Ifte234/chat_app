@@ -154,10 +154,12 @@ class Api {
   }
 
   /// ************** Chat Screen Related APIs
-  //For getting conversation id
-  static String getConversationID(String id) => user.uid.hashCode <= id.hashCode
-      ? '${user.uid}_$id'
-      : '${id}_${user.uid}';
+  ///
+  /// //For getting conversation id
+   static String getConversationID(String id) => user.uid.hashCode <= id.hashCode
+        ? '${user.uid}_$id'
+        : '${id}_${user.uid}';
+
 // For getting all messages for a specific conversation from firestore database
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
       ChatUser user) {
@@ -166,9 +168,10 @@ class Api {
         .snapshots();
   }
 
-//   for sending message
+// Chats (Collection) --> Conversation_id (doc) -->messages (collection) --> message (doc)
+  //   for sending message
   static Future<void> sendMessage(
-      ChatUser chatuser, String msg, MyType type) async {
+      ChatUser chatuser, String msg,) async {
     // message sending time also used as id
     final time = DateTime.now().millisecondsSinceEpoch.toString();
     // Message to send
@@ -183,5 +186,4 @@ class Api {
         .collection('chats/${getConversationID(chatuser.id)}/messages/');
     await ref.doc(time).set(messsage.toJson());
   }
-// Chats (Collection) --> Conversation_id (doc) -->messages (collection) --> message (doc)
 }

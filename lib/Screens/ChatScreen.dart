@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -20,7 +23,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   // for storing all messages
   List<Message> _list = [];
-  final TextEditingController _textEditingController = TextEditingController();
+  // For handling message text changes
+  final _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +50,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     case ConnectionState.active:
                     case ConnectionState.done:
                       final data = snapshot.data?.docs;
+                      log("Data: ${jsonEncode(data![0].data())}");
                       _list = data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
 
-                  }
+
 
                   if (_list.isNotEmpty) {
                     return ListView.builder(
@@ -64,7 +69,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     );
                   }
-                },
+                } }
               ),
             ),
             _chatInput(),
@@ -124,7 +129,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   IconButton(onPressed: () {}, icon: Icon(Icons.emoji_emotions, color: Colors.blue)),
                   Expanded(
                     child: TextFormField(
-                      controller: _textEditingController,
+                      controller: _textController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
@@ -144,12 +149,13 @@ class _ChatScreenState extends State<ChatScreen> {
             onPressed: () {
 
 
-              if (_textEditingController.text.isNotEmpty) {
-                Api.sendMessage(widget.user, _textEditingController.text,MyType.text);
-                _textEditingController.text = '';
-                // _textEditingController.clear(); // Use clear instead of setting it to empty string
+              if (_textController.text.isNotEmpty) {
+                Api.sendMessage(widget.user, _textController.text);
+                _textController.text = '';
+                // _textController.clear();
+                // Use clear instead of setting it to empty string
                 Fluttertoast.showToast(
-                  msg: "This is Center Short Toast${Api.sendMessage(widget.user, _textEditingController.text,MyType.text)}",
+                  msg: "This is Center Short Toast${Api.sendMessage(widget.user, _textController.text)}",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.CENTER,
                   timeInSecForIosWeb: 1,

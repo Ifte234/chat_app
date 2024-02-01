@@ -18,7 +18,7 @@ class Message {
     toId = json['toId'].toString();
     msg = json['msg'].toString();
     read = json['read'].toString();
-    type = json['type'].toString()  ==MyType.image.name ? MyType.image : MyType.text;
+    type = json['type'].toString()  == MyType.image.name ? MyType.image : MyType.text;
     sent = json['sent'].toString();
     fromId = json['fromId'].toString();
   }
@@ -28,7 +28,7 @@ class Message {
     data['toId'] = toId;
     data['msg'] = msg;
     data['read'] = read;
-    data['type'] = type;
+    data['type'] = type.name;
     data['sent'] = sent;
     data['fromId'] = fromId;
     return data;

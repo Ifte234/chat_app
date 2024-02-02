@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,6 +11,7 @@ import '../apis/ChatUser.dart';
 import '../apis/Message.dart';
 import '../main.dart';
 import '../widgets/message_card.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user;
@@ -25,12 +27,20 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Message> _list = [];
   // For handling message text changes
   final _textController = TextEditingController();
+  // For storing value of showing or storing emoji
+  bool _showemoji = false;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           elevation: 4,
           automaticallyImplyLeading: false,
           flexibleSpace: _appBar(),
@@ -73,6 +83,33 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             _chatInput(),
+
+
+            EmojiPicker(
+
+            onBackspacePressed: () {
+            // Do something when the user taps the backspace button (optional)
+            // Set it to null to hide the Backspace-Button
+            },
+            textEditingController: _textController, // pass here the same [TextEditingController] that is connected to your input field, usually a [TextFormField]
+            config: Config(
+            height: 256,
+
+            checkPlatformCompatibility: true,
+            emojiViewConfig: EmojiViewConfig(
+            // Issue: https://github.com/flutter/flutter/issues/28894
+            emojiSizeMax: 28 *
+            (foundation.defaultTargetPlatform == TargetPlatform.iOS
+    ?  1.20
+        :  1.0),
+    ),
+    swapCategoryAndBottomBar:  false,
+    skinToneConfig: const SkinToneConfig(),
+    categoryViewConfig: const CategoryViewConfig(),
+    bottomActionBarConfig: const BottomActionBarConfig(),
+    searchViewConfig: const SearchViewConfig(),
+    ),
+    )
           ],
         ),
       ),
@@ -126,7 +163,12 @@ class _ChatScreenState extends State<ChatScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               child: Row(
                 children: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.emoji_emotions, color: Colors.blue)),
+                  // emoji Button
+                  IconButton(onPressed: () {
+                    setState(() {
+                      _showemoji = !_showemoji;
+                    });
+                  }, icon: Icon(Icons.emoji_emotions, color: Colors.blue)),
                   Expanded(
                     child: TextFormField(
                       controller: _textController,

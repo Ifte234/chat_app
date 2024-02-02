@@ -151,8 +151,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
               if (_textController.text.isNotEmpty) {
                 Api.sendMessage(widget.user, _textController.text);
-                _textController.text = '';
-                // _textController.clear();
+                // _textController.text = '';
+                _textController.clear();
                 // Use clear instead of setting it to empty string
                 Fluttertoast.showToast(
                   msg: "This is Center Short Toast${Api.sendMessage(widget.user, _textController.text)}",

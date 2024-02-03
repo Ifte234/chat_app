@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/apis/APIs.dart';
 import 'package:chat_app/helper/myDateUtils.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,8 +10,8 @@ import '../apis/Message.dart';
 import '../main.dart';
 
 class MessageCard extends StatefulWidget {
-  final Message msg;
-  const MessageCard({super.key, required this.msg});
+  final Message message;
+  const MessageCard({super.key,  required this.message});
 
   @override
   State<MessageCard> createState() => _MessageCardState();
@@ -19,16 +20,16 @@ class MessageCard extends StatefulWidget {
 class _MessageCardState extends State<MessageCard> {
   @override
   Widget build(BuildContext context) {
-    return Api.user.uid == widget.msg.fromId
-        ? _greenMessage(widget.msg)
-        : _blueMessage(widget.msg);
+    return Api.user.uid == widget.message.fromId
+        ? _greenMessage(widget.message)
+        : _blueMessage(widget.message);
   }
 
 // Sender or another user message
   Widget _blueMessage(Message message) {
     // update last read message if sender and receiver or different
-    if(widget.msg.read.isEmpty){
-      Api.updateMessageReadStatus(widget.msg);
+    if(widget.message.read.isEmpty){
+      Api.updateMessageReadStatus(widget.message);
     }
     return Row(
 
@@ -48,10 +49,26 @@ class _MessageCardState extends State<MessageCard> {
               border: Border.all(color: Colors.lightBlue),
               color: Color.fromARGB(255, 221, 245, 255),
             ),
-            child: Text(
+            child:
+            widget.message.type == MyType.text ? Text(
               message.msg,
               style: TextStyle(color: Colors.black, fontSize: 15),
+            ):
+            ClipRRect(
+              borderRadius: BorderRadius.circular(mq.height * 0.1),
+              child: CachedNetworkImage(
+                height: mq.height * 0.2,
+                width: 170,
+                fit: BoxFit.cover,
+                imageUrl: widget.message.msg,
+
+                placeholder: (context, url) =>
+                    CircularProgressIndicator(),
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.error),
+              ),
             ),
+
           ),
         ),
         Padding(
@@ -77,7 +94,7 @@ class _MessageCardState extends State<MessageCard> {
               height: mq.height * 0.04,
             ),
             // Double tick blue icon for message read
-            if (widget.msg.read.isNotEmpty)
+            if (widget.message.read.isNotEmpty)
               const Icon(
                 Icons.done_all_rounded,
                 color: Colors.blue,

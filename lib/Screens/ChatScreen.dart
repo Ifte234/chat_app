@@ -1,13 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
+// import 'dart:html';
+import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../apis/APIs.dart';
 import '../apis/ChatUser.dart';
+import '../apis/Message.dart';
 import '../apis/Message.dart';
 import '../main.dart';
 import '../widgets/message_card.dart';
@@ -29,6 +33,11 @@ class _ChatScreenState extends State<ChatScreen> {
   final _textController = TextEditingController();
   // For storing value of showing or storing emoji
   bool _showemoji = false;
+  // Image picker
+  final ImagePicker _picker = ImagePicker();
+  List<XFile>? image;
+  String? _image;
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       itemCount: _list.length,
                       physics: BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return MessageCard(msg: _list[index]);
+                        return MessageCard(message: _list[index]);
                       },
                     );
                   } else {
@@ -181,8 +190,32 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.image, color: Colors.blue)),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.camera_alt_rounded, color: Colors.blue)),
+                  IconButton(onPressed: () async {
+                     // Future getImageFromCamera() async {
+                    //   final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+                    //
+                    //   if (image != null) {
+                    //     setState(() {
+                    //       _image = image.path;
+                    //     });}}
+                    // getImageFromCamera();
+                    // Api.sendChatImage(widget.user, File(_image!.path));
+                    // Navigator.pop(context);
+                  },
+                   icon: Icon(Icons.image, color: Colors.blue)),
+                  IconButton(onPressed: () async { final ImagePicker picker = ImagePicker();
+
+                  // Pick an image
+                  final XFile? image = await picker.pickImage(
+                      source: ImageSource.camera, imageQuality: 70);
+                  if (image != null) {
+                    log('Image Path: ${image.path}');
+                    // setState(() => _isUploading = true);
+
+                    await Api.sendChatImage(
+                        widget.user, File(image.path));
+                  }
+                  }, icon: Icon(Icons.camera_alt_rounded, color: Colors.blue)),
                 ],
               ),
             ),
@@ -192,19 +225,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
               if (_textController.text.isNotEmpty) {
-                Api.sendMessage(widget.user, _textController.text);
+                Api.sendMessage(widget.user, _textController.text,MyType.text);
                 // _textController.text = '';
                 _textController.clear();
                 // Use clear instead of setting it to empty string
-                Fluttertoast.showToast(
-                  msg: "This is Center Short Toast${Api.sendMessage(widget.user, _textController.text)}",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0,
-                );
+
               }
             },
             minWidth: 0,

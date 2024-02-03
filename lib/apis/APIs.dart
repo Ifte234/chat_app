@@ -41,7 +41,7 @@ class Api {
         .exists;
   }
 
-  // for adding an chat user for our conversation
+  // for adding a chat user for our conversation
   static Future<bool> addChatUser(String email) async {
     final data = await firestore
         .collection('users')
@@ -174,6 +174,7 @@ class Api {
   static Future<void> sendMessage(
     ChatUser chatuser,
     String msg,
+    MyType type,
   ) async {
     // message sending time also used as id
     final time = DateTime.now().millisecondsSinceEpoch.toString();
@@ -197,11 +198,42 @@ class Api {
         .doc(msg.sent)
         .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
   }
+
 //   Get only Last Message of chat
   static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage(
       ChatUser user) {
     return firestore
-        .collection('chats/${getConversationID(user.id)}/messages/').orderBy('sent',descending: true).limit(1)
+        .collection('chats/${getConversationID(user.id)}/messages/')
+        .orderBy('sent', descending: true)
+        .limit(1)
         .snapshots();
+  }
+
+//   Send Chat Image
+
+  static Future<void> sendChatImage(
+      ChatUser chatUser, File file, ) async {
+//     First it will upload image to firestore and then we will send that image as a message to user
+    //1.Upload image to firestore..
+    //   getting image file extension
+    final ext = file.path.split('.').last;
+
+    //   storage file ref with path
+    // DateTime.now() as a unique id for storage to firestore
+    final ref = storage.ref().child(
+        'images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+
+    //   uploading image
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      log("Data Transferred: ${p0.bytesTransferred / 1000} Kb");
+    });
+    //   updating image in firestore database
+    final imageUrl = await ref.getDownloadURL();
+    // 02. Send image as a message
+    await sendMessage(chatUser, imageUrl, MyType.image);
+
+
   }
 }

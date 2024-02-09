@@ -12,7 +12,7 @@ class Message {
   late final String read;
   late final String sent;
   late final String fromId;
-  late final MyType type;
+  late  MyType type;
 
   Message.fromJson(Map<String, dynamic> json){
     toId = json['toId'].toString();

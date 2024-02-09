@@ -51,10 +51,12 @@ class _MessageCardState extends State<MessageCard> {
             ),
             child:
             widget.message.type == MyType.text ? Text(
-              message.msg,
+              // Show text
+              widget.message.msg,
               style: TextStyle(color: Colors.black, fontSize: 15),
-            ):
-            ClipRRect(
+            )
+                // Show image
+                : ClipRRect(
               borderRadius: BorderRadius.circular(mq.height * 0.1),
               child: CachedNetworkImage(
                 height: mq.height * 0.2,
@@ -65,7 +67,7 @@ class _MessageCardState extends State<MessageCard> {
                 placeholder: (context, url) =>
                     CircularProgressIndicator(),
                 errorWidget: (context, url, error) =>
-                    Icon(Icons.error),
+                    Icon(Icons.image),
               ),
             ),
 
@@ -123,10 +125,49 @@ class _MessageCardState extends State<MessageCard> {
               border: Border.all(color: Colors.lightGreen),
               color: Color.fromARGB(255, 218, 255, 176),
             ),
-            child: Text(
-              message.msg,
-              style: TextStyle(color: Colors.black, fontSize: 15),
+            child:widget.message.type == MyType.text
+    ?
+    //show text
+    Text(
+    widget.message.msg,
+    style: const TextStyle(fontSize: 15, color: Colors.black87),
+    )
+        :
+    //show image
+    ClipRRect(
+    borderRadius: BorderRadius.circular(15),
+    child: CachedNetworkImage(
+    imageUrl: widget.message.msg,
+    placeholder: (context, url) => const Padding(
+    padding: EdgeInsets.all(8.0),
+    child: CircularProgressIndicator(strokeWidth: 2),
+    ),
+    errorWidget: (context, url, error) =>
+    const Icon(Icons.image, size: 70),
+    ),
+
+    //
+    // widget.message.type == MyType.text ? Text(
+            //   // Show text
+            //   widget.message.msg,
+            //   style: TextStyle(color: Colors.black, fontSize: 15),
+            // )
+            // // Show image
+            //     : ClipRRect(
+            //   borderRadius: BorderRadius.circular(mq.height * 0.1),
+            //   child: CachedNetworkImage(
+            //
+            //
+            //     fit: BoxFit.cover,
+            //     imageUrl: widget.message.msg,
+            //
+            //     placeholder: (context, url) =>
+            //         CircularProgressIndicator(),
+            //     errorWidget: (context, url, error) =>
+            //         Icon(Icons.image),
+            //   ),
             ),
+
           ),
         ),
       ],

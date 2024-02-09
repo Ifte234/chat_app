@@ -61,7 +61,10 @@ class _ChatUserCardState extends State<ChatUserCard> {
               // User Name
               title: Text(widget.user.name),
               // Last Message
-              subtitle: Text(_message != null? _message!.msg:widget.user.about),
+              subtitle: Text(_message != null?
+
+              _message!.type == MyType.image? 'Image':
+              _message!.msg:widget.user.about),
               // Time of Last Message
               trailing: _message == null ? null :_message!.read.isEmpty && _message?.fromId != Api.user.uid? Container(
                 height: 15,

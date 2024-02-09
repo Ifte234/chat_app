@@ -58,6 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Expanded(
               child: StreamBuilder(
+
                 stream: Api.getAllMessages(widget.user),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
@@ -76,6 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   if (_list.isNotEmpty) {
                     return ListView.builder(
+                      reverse: true,
                       itemCount: _list.length,
                       physics: BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
@@ -94,31 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
             _chatInput(),
 
 
-            EmojiPicker(
 
-            onBackspacePressed: () {
-            // Do something when the user taps the backspace button (optional)
-            // Set it to null to hide the Backspace-Button
-            },
-            textEditingController: _textController, // pass here the same [TextEditingController] that is connected to your input field, usually a [TextFormField]
-            config: Config(
-            height: 256,
-
-            checkPlatformCompatibility: true,
-            emojiViewConfig: EmojiViewConfig(
-            // Issue: https://github.com/flutter/flutter/issues/28894
-            emojiSizeMax: 28 *
-            (foundation.defaultTargetPlatform == TargetPlatform.iOS
-    ?  1.20
-        :  1.0),
-    ),
-    swapCategoryAndBottomBar:  false,
-    skinToneConfig: const SkinToneConfig(),
-    categoryViewConfig: const CategoryViewConfig(),
-    bottomActionBarConfig: const BottomActionBarConfig(),
-    searchViewConfig: const SearchViewConfig(),
-    ),
-    )
           ],
         ),
       ),
@@ -174,6 +152,32 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   // emoji Button
                   IconButton(onPressed: () {
+
+                    EmojiPicker(
+
+                      onBackspacePressed: () {
+                        // Do something when the user taps the backspace button (optional)
+                        // Set it to null to hide the Backspace-Button
+                      },
+                      textEditingController: _textController, // pass here the same [TextEditingController] that is connected to your input field, usually a [TextFormField]
+                      config: Config(
+                        height: 256,
+
+                        checkPlatformCompatibility: true,
+                        emojiViewConfig: EmojiViewConfig(
+                          // Issue: https://github.com/flutter/flutter/issues/28894
+                          emojiSizeMax: 28 *
+                              (foundation.defaultTargetPlatform == TargetPlatform.iOS
+                                  ?  1.20
+                                  :  1.0),
+                        ),
+                        swapCategoryAndBottomBar:  false,
+                        skinToneConfig: const SkinToneConfig(),
+                        categoryViewConfig: const CategoryViewConfig(),
+                        bottomActionBarConfig: const BottomActionBarConfig(),
+                        searchViewConfig: const SearchViewConfig(),
+                      ),
+                    );
                     setState(() {
                       _showemoji = !_showemoji;
                     });
@@ -190,16 +194,34 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
+                  // Pick Multiple images
                   IconButton(onPressed: () async {
-                     // Future getImageFromCamera() async {
+      final ImagePicker picker = ImagePicker();
+
+      // Pick an image
+      final List<XFile> images = await picker.pickMultiImage(
+          );
+      if (images != null) {
+
+        // setState(() => _isUploading = true);
+//         Uploading and sending images one by one
+for(var i in images){
+  log('Image Path: ${i.path}');
+  await Api.sendChatImage(
+      widget.user, File(i.path));
+}
+       }
+
+                    //  Future getImageFromCamera() async {
                     //   final XFile? image = await _picker.pickImage(source: ImageSource.camera);
                     //
                     //   if (image != null) {
                     //     setState(() {
-                    //       _image = image.path;
+                    //       // _image = image.path;
                     //     });}}
                     // getImageFromCamera();
-                    // Api.sendChatImage(widget.user, File(_image!.path));
+                    //
+                    // await Api.sendChatImage(widget.user, File(image?.path));
                     // Navigator.pop(context);
                   },
                    icon: Icon(Icons.image, color: Colors.blue)),
@@ -207,7 +229,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   // Pick an image
                   final XFile? image = await picker.pickImage(
-                      source: ImageSource.camera, imageQuality: 70);
+                      source: ImageSource.camera, imageQuality: 30);
                   if (image != null) {
                     log('Image Path: ${image.path}');
                     // setState(() => _isUploading = true);
